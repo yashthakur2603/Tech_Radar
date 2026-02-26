@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 min-h-screen;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99, 102, 241, 0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl;
+  }
+
+  .ring-adopt   { @apply bg-radar-adopt/20   border-radar-adopt   text-radar-adopt;   }
+  .ring-trial   { @apply bg-radar-trial/20   border-radar-trial   text-radar-trial;   }
+  .ring-assess  { @apply bg-radar-assess/20  border-radar-assess  text-radar-assess;  }
+  .ring-hold    { @apply bg-radar-hold/20    border-radar-hold    text-radar-hold;    }
+
+  .blip-adopt   { @apply fill-radar-adopt   stroke-radar-adopt;   }
+  .blip-trial   { @apply fill-radar-trial   stroke-radar-trial;   }
+  .blip-assess  { @apply fill-radar-assess  stroke-radar-assess;  }
+  .blip-hold    { @apply fill-radar-hold    stroke-radar-hold;    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
