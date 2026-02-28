@@ -1,0 +1,5 @@
+{
+  "name": "Personal Tech Radar Agent",
+  "description": "A full-stack app for Business Data Analysts to analyze their CVs and get personalized tech upskilling recommendations using Gemini AI.",
+  "requestFramePermissions": []
+}
