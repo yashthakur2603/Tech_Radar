@@ -73,11 +73,8 @@ ${job.targetRole}
 `.trim();
 
         const response = await client.models.generateContent({
-          model: 'gemini-1.5-pro',
-          contents: prompt,
-          config: {
-            tools: [{ googleSearch: {} }]
-          }
+          model: 'gemini-2.5-pro',
+          contents: prompt
         });
 
         const raw = response.text;

@@ -1,0 +1,59 @@
+ID: aea7a541-d018-4327-9f91-d6e8b6d0aa5d, Status: completed
+Created: 2026-02-28 23:31:22
+Updated: 2026-02-28 23:32:39
+---
+ID: cc5fe207-2d8d-4460-b042-c7ca7b0dd6e4, Status: failed
+Created: 2026-02-28 23:34:20
+Updated: 2026-02-28 23:38:31
+Error: {"error":{"code":404,"message":"models/gemini-1.5-flash is not found for API version v1beta, or is n...
+---
+ID: 45db6a8a-73ab-4a0b-9e9b-e35cde7e41c7, Status: failed
+Created: 2026-02-28 23:46:08
+Updated: 2026-02-28 23:46:09
+Error: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing ...
+---
+ID: a0f552b1-0dc5-4167-9df5-421853b7bf21, Status: failed
+Created: 2026-02-28 23:49:07
+Updated: 2026-02-28 23:49:09
+Error: The selected AI model does not support the required features. Please check your API configuration....
+---
+ID: 7c3abe35-9496-4290-b97a-32b69d0768e7, Status: failed
+Created: 2026-03-01 16:46:34
+Updated: 2026-03-01 16:46:38
+Error: The selected AI model does not support the required features. Please check your API configuration....
+---
+ID: 902803c8-e6ee-44ea-8f7b-807f4dc20e57, Status: failed
+Created: 2026-03-01 16:51:48
+Updated: 2026-03-01 16:51:49
+Error: The selected AI model does not support the required features. Please check your API configuration....
+---
+ID: 08f9aa08-65f3-42e8-bfa4-2e552ba958ba, Status: failed
+Created: 2026-03-01 17:00:09
+Updated: 2026-03-01 17:00:14
+Error: The selected AI model does not support the required features. Please check your API configuration....
+---
+ID: 115fd8b3-d846-4459-92f7-df99c2e83518, Status: failed
+Created: 2026-03-01 17:06:15
+Updated: 2026-03-01 17:06:19
+Error: Your Gemini API key has exceeded its quota limits for today. Please wait, upgrade your billing plan ...
+---
+ID: d41e6f3f-8e13-4825-a16f-6765e7f92f41, Status: failed
+Created: 2026-03-01 19:06:31
+Updated: 2026-03-01 19:06:35
+Error: Your Gemini API key has exceeded its quota limits for today. Please wait, upgrade your billing plan ...
+---
+ID: 1db460a6-d536-4f35-aac5-2f7213716469, Status: failed
+Created: 2026-03-01 19:11:22
+Updated: 2026-03-01 19:11:25
+Error: Your Gemini API key has exceeded its quota limits for today. Please wait, upgrade your billing plan ...
+---
+ID: 8d95b2fc-8be8-411b-82cf-9a7048b059fe, Status: failed
+Created: 2026-03-01 19:14:53
+Updated: 2026-03-01 19:14:56
+Error: Your Gemini API key has exceeded its quota limits for today. Please wait, upgrade your billing plan ...
+---
+ID: 2be08f10-45bb-4967-8c26-87493333094f, Status: failed
+Created: 2026-03-03 07:54:08
+Updated: 2026-03-03 07:54:09
+Error: Your Gemini API key has exceeded its quota limits for today. Please wait, upgrade your billing plan ...
+---
