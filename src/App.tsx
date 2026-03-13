@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { UploadCloud, Target, Sparkles, CheckCircle2, AlertCircle, FileText, Activity, DollarSign } from 'lucide-react';
+import { UploadCloud, Target, Sparkles, CheckCircle2, AlertCircle, FileText, Activity, DollarSign, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
-
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 interface Technology {
   technology_name: string;
   category: string;
@@ -32,8 +33,106 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  const handleExportPDF = async () => {
+    if (!result || isExporting) return;
+    setIsExporting(true);
+    
+    try {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: 'a4'
+      });
+      
+      const margin = 40;
+      let yPos = margin;
+      const pageWidth = doc.internal.pageSize.width;
+      const maxLineWidth = pageWidth - margin * 2;
+      
+      // Helper to wrap text
+      const writeText = (text: string, x: number, y: number, options: any = {}) => {
+        doc.setFontSize(options.size || 12);
+        doc.setTextColor(options.color || '#333333');
+        if (options.font) doc.setFont('helvetica', options.font);
+        
+        const lines = doc.splitTextToSize(text, options.maxWidth || maxLineWidth);
+        
+        // Check page break
+        if (y + (lines.length * (options.size || 12)) > doc.internal.pageSize.height - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        
+        doc.text(lines, x, y);
+        return y + (lines.length * (options.size || 12) * 1.2) + (options.spacing || 0);
+      };
+
+      // Header
+      yPos = writeText('Tech Radar Pro - Strategic Insights', margin, yPos, { size: 24, font: 'bold', color: '#1E1B4B', spacing: 10 });
+      yPos = writeText(`Target Role: ${targetRole} | Generated: ${new Date(result.run_date).toLocaleDateString()}`, margin, yPos, { size: 10, color: '#64748B', spacing: 30 });
+      
+      // Profile Synergy
+      yPos = writeText('Profile Synergy', margin, yPos, { size: 16, font: 'bold', color: '#1E293B', spacing: 10 });
+      yPos = writeText(result.current_profile_summary, margin, yPos, { size: 11, color: '#475569', spacing: 20 });
+      
+      // Top 5 Next Skills
+      yPos = writeText('Top 5 Recommended Skills:', margin, yPos, { size: 12, font: 'bold', color: '#1E293B', spacing: 5 });
+      const skillsText = result.top_5_next_skills.join(' • ');
+      yPos = writeText(skillsText, margin, yPos, { size: 11, color: '#6366F1', font: 'bold', spacing: 30 });
+
+      // Technologies
+      yPos = writeText('Capitalize On:', margin, yPos, { size: 18, font: 'bold', color: '#1E293B', spacing: 15 });
+      
+      result.recommended_technologies.forEach((tech) => {
+        // Build table data for each technology
+        const tableData = [
+          ['Category', tech.category],
+          ['Priority', `${tech.priority} Priority`],
+          ['Learning Curve', tech.learning_difficulty],
+          ['Market Signal', tech.market_signal],
+          ['Salary Impact', tech.salary_impact],
+          ['Why It Matters', tech.why_relevant_for_me],
+          ['Project Idea', tech.project_idea],
+        ];
+
+        // Ensure we don't break in the middle of a header
+        if (yPos > doc.internal.pageSize.height - 100) {
+          doc.addPage();
+          yPos = margin;
+        }
+
+        yPos = writeText(tech.technology_name, margin, yPos, { size: 14, font: 'bold', color: '#312E81', spacing: 5 });
+        yPos = writeText(tech.short_description, margin, yPos, { size: 10, color: '#475569', spacing: 10 });
+        
+        autoTable(doc, {
+          startY: yPos,
+          body: tableData,
+          margin: { left: margin, right: margin },
+          theme: 'grid',
+          styles: { fontSize: 10, cellPadding: 6 },
+          columnStyles: {
+            0: { fontStyle: 'bold', cellWidth: 100, fillColor: '#F8FAFC', textColor: '#334155' },
+            1: { textColor: '#1E293B' }
+          },
+          didDrawPage: (data) => {
+            if (data.cursor) yPos = data.cursor.y + 20;
+          }
+        });
+      });
+
+      doc.save('Tech_Radar_Strategic_Insights.pdf');
+    } catch (err) {
+      console.error('Failed to export PDF:', err);
+      alert('Failed to export PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleFileChange = (file?: File) => {
     if (!file) return;
@@ -241,9 +340,44 @@ export default function App() {
 
           {/* Actual Results View */}
           {result && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} ref={reportRef} style={{ background: '#0F172A', padding: '20px', borderRadius: '12px', margin: '-20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 30 }}>
-                <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#F8FAFC' }}>Strategic Insights</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: '#F8FAFC' }}>Strategic Insights</h2>
+                  <button
+                    onClick={handleExportPDF}
+                    disabled={isExporting}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: 'rgba(99, 102, 241, 0.15)',
+                      color: '#818CF8',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      padding: '6px 14px',
+                      borderRadius: 999,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: isExporting ? 'wait' : 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseOver={(e) => {
+                      if (!isExporting) {
+                        e.currentTarget.style.background = 'rgba(99, 102, 241, 0.25)';
+                        e.currentTarget.style.color = '#A5B4FC';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (!isExporting) {
+                        e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)';
+                        e.currentTarget.style.color = '#818CF8';
+                      }
+                    }}
+                  >
+                    <Download size={14} />
+                    {isExporting ? 'Exporting...' : 'Export PDF'}
+                  </button>
+                </div>
                 <div style={{ fontSize: 13, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Sparkles size={14} color="#6366F1" />
                   Generated {new Date(result.run_date).toLocaleDateString()}

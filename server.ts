@@ -92,7 +92,10 @@ ${targetRole}
 
         const response = await client.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: prompt
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+            }
         });
 
         const raw = response.text;
@@ -105,6 +108,17 @@ ${targetRole}
 
         // Sanitize any remaining bad control characters (tabs, etc) that might break JSON.parse
         jsonText = jsonText.replace(/[\u0000-\u0009\u000B-\u001F]/g, '');
+        
+        // Attempt to fix common JSON issues from LLMs (e.g. unquoted keys or trailing commas)
+        // Note: Using a robust approach for fixing JSON using Regex can be complex,
+        // but removing trailing commas is safe.
+        jsonText = jsonText.replace(/,\s*([\]}])/g, '$1');
+
+        // Extract JSON specifically if it's trapped in conversational text
+        const jsonMatch = jsonText.match(/{(?:[^{}]|{(?:[^{}]|{[^{}]*})*})*}/);
+        if (jsonMatch) {
+            jsonText = jsonMatch[0];
+        }
 
         if (!jsonText) {
             return res.status(500).json({ error: 'Gemini returned empty response' });
