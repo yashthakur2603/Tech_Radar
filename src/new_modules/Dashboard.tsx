@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AnalysisResult } from '../shared/types';
-import { LayoutDashboard, Target, Briefcase, Activity } from 'lucide-react';
+import { LayoutDashboard, Target, Briefcase, Activity, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { generatePDFReport } from '../utils/pdfExport';
 
 export default function Dashboard({ result }: { result: AnalysisResult | null }) {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    if (!result || isExporting) return;
+    setIsExporting(true);
+    try {
+      await generatePDFReport(result, 'Your Profile');
+    } catch (error) {
+      console.error('Failed to export PDF:', error);
+      alert('Failed to export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (!result) {
     return (
       <div className="glass-panel" style={{ padding: 40, textAlign: 'center', marginTop: 40 }}>
@@ -18,10 +34,45 @@ export default function Dashboard({ result }: { result: AnalysisResult | null })
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ paddingBottom: 40 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 800, color: '#F8FAFC', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <LayoutDashboard size={28} color="#6366F1" />
-        Career Execution Dashboard
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#F8FAFC', margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <LayoutDashboard size={28} color="#6366F1" />
+          Career Execution Dashboard
+        </h1>
+        <button
+          onClick={handleExport}
+          disabled={isExporting}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            background: 'rgba(99, 102, 241, 0.15)',
+            color: '#818CF8',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            padding: '8px 16px',
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: isExporting ? 'wait' : 'pointer',
+            transition: 'all 0.2s',
+          }}
+          onMouseOver={(e) => {
+            if (!isExporting) {
+              e.currentTarget.style.background = 'rgba(99, 102, 241, 0.25)';
+              e.currentTarget.style.color = '#A5B4FC';
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!isExporting) {
+              e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)';
+              e.currentTarget.style.color = '#818CF8';
+            }
+          }}
+        >
+          <Download size={16} />
+          {isExporting ? 'Exporting...' : 'Export Full Report (PDF)'}
+        </button>
+      </div>
       <p style={{ color: '#94A3B8', marginBottom: 30 }}>Overview of your profile strength and immediate next steps.</p>
 
       {/* Overview Cards */}
